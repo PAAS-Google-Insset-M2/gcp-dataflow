@@ -15,3 +15,11 @@ apache spark console (a lot of data !),
 DataflowRunner => executed on gcp
 
 Beam => treatment/package ?
+
+Using ParDo => each p collection item will be transmitted to the function for treatment !
+
+- Reading the list of items
+- Reading a record of bucket data & retrieving the list of data
+
+env with gcp app credentials, bucket_name, project_id & job_name
+

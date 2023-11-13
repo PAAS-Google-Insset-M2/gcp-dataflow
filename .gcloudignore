@@ -1,0 +1,8 @@
+.env
+.env.yaml
+env/
+
+imgs/
+.git/
+.idea/
+.vscode/
