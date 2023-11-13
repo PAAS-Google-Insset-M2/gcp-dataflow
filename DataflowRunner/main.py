@@ -20,14 +20,18 @@ gcloud_app_credentials = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "./../
 bucket_name = os.environ.get("BUCKET_NAME")
 temp_bucket_name = os.environ.get("TEMP_BUCKET_NAME")
 
+dataset_location = os.environ.get("DATASET_LOCATION", "europe-west9")
+
 # Default, timeout = 5 seconds
 timeout = int(os.environ.get("TIMEOUT", "10"))
 
 empty_data = []
 
 beam_options = PipelineOptions(
-    runner="DirectRunner",
-    project=project_id
+    runner="DataflowRunner",
+    project=project_id,
+    job_name=job_name,
+    region=dataset_location
 )
 
 table_config = bigquery.TableReference(
@@ -59,8 +63,9 @@ class TreatStation(beam.DoFn):
 
 def run():
     with beam.Pipeline(options=beam_options) as p:
-        (p | "Read" >> beam.io.ReadFromText("gs://velo-lib-amiens/velo-data_2023-10-16_17-15-01.json")
+        (p | "Read" >> beam.io.ReadFromText("gs://velo-lib-amiens/velo-data_*.json")
          | "Read data" >> beam.Map(lambda line: json.loads(line))
+         # | "Filter data" >> beam.Map(lambda line: line != empty_data)
          | "Treat bucket data (from single data to station list)" >> beam.ParDo(TreatStation())
          | "Retrieve station data" >> beam.Map(
                     lambda station: {
@@ -83,10 +88,6 @@ def run():
                                                   write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE,
                                                   create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
          )
-
-        # import pandas as pd
-        #
-        # pd.to_datetime(int('1331856000000'), utc=True, unit='ms')
 
         p.run()
 
