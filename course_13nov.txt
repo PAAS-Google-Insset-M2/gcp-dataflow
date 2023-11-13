@@ -1,0 +1,16 @@
+November 13th
+
+BigQuery StudioExplorator ?
+
+With one table ?
+Use of data pipelines with Apache Beam
+
+Create a pipeline => from bucket data to BigQuery table
+
+Beam -> dataflow runner (main.py) & directrunner (main.py, bigquery.py, )
+4 possible runners => 
+apache flink runner, 
+apache spark console (a lot of data !), 
+(directrunner) => slowest (local execution),
+DataflowRunner => executed on gcp
+
